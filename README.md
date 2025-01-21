@@ -11,6 +11,11 @@ Built with **React Native** and **Expo**.
 
 For android you can download the latest APK release [here](https://github.com/eugengul/mood-diary/releases/latest).
 
+## Screenshots
+
+![Today](https://github.com/user-attachments/assets/66584d2e-7219-4637-99cc-a37d9b02230e)
+![Calendar](https://github.com/user-attachments/assets/98cf18bc-4429-46de-99ae-891523473b09)
+
 ## Building APK
 
 1. Install Android Studio.

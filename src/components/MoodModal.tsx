@@ -1,7 +1,7 @@
-import { Modal, Pressable, StyleSheet, View } from "react-native";
-import { PropsWithChildren } from "react";
-import AntDesignIcons from "@expo/vector-icons/AntDesign";
 import { COLORS } from "@/constants/colors";
+import AntDesignIcons from "@expo/vector-icons/AntDesign";
+import { PropsWithChildren } from "react";
+import { Modal, Pressable, StyleSheet, View } from "react-native";
 
 interface MoodModalProps extends PropsWithChildren {
   isVisible: boolean;
@@ -26,19 +26,14 @@ export function MoodModal({ isVisible, onClose, children }: MoodModalProps) {
 const styles = StyleSheet.create({
   modal: {
     flex: 1,
-    width: "100%",
-    height: "100%",
     padding: 15,
     borderRadius: 10,
-    bottom: 0,
     borderWidth: 2,
     backgroundColor: COLORS.MODAL,
   },
   header: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    alignItems: "center",
-    marginBottom: 10,
   },
-  content: { flexGrow: 1 },
+  content: { flex: 1 },
 });

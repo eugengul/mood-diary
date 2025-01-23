@@ -38,7 +38,7 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
         date DATE NOT NULL,
         partOfDay VARCHAR(15) NOT NULL,
         moodId VARCHAR(20) NOT NULL,
-        note VARCHAR(50),
+        note VARCHAR(255),
         UNIQUE(date, partOfDay)
       );
     `);

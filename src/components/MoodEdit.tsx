@@ -1,6 +1,8 @@
+import { COLORS } from "@/constants/colors";
+import { MAX_NOTE_LENGTH } from "@/constants/constants";
 import { Mood } from "@/constants/Moods";
-import { Button, StyleSheet, TextInput, View } from "react-native";
 import React from "react";
+import { Button, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { MoodList } from "./MoodList";
 
 interface MoodListProps {
@@ -17,14 +19,21 @@ export function MoodEdit({ mood, onSave }: MoodListProps) {
   return (
     <View style={styles.container}>
       <MoodList selectedMood={selectedMood} onSelect={onChangeSelectedMood} />
-      <TextInput
-        editable
-        maxLength={25}
-        onChangeText={(input) => onChangeNoteInput(input)}
-        placeholder="Add your note..."
-        value={noteInput}
-        style={styles.input}
-      />
+      <ScrollView
+        persistentScrollbar={true}
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContainer}
+      >
+        <TextInput
+          editable
+          multiline
+          maxLength={MAX_NOTE_LENGTH}
+          onChangeText={(input) => onChangeNoteInput(input)}
+          placeholder="Add your note..."
+          value={noteInput}
+          style={styles.input}
+        />
+      </ScrollView>
       <Button
         title="Save"
         onPress={() =>
@@ -40,12 +49,21 @@ export function MoodEdit({ mood, onSave }: MoodListProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexGrow: 1,
     gap: 15,
   },
-  input: {
-    height: 40,
+  scroll: {
+    flex: 1,
+    flexGrow: 0.5,
     borderWidth: 1,
+    borderColor: COLORS.MUTED_COLOR,
+  },
+  scrollContainer: {
+    flexGrow: 1, // Allow the TextInput to fill the ScrollView
+  },
+  input: {
+    flex: 1, // Fill all available height of the ScrollView
+    fontSize: 20,
+    textAlignVertical: "top",
     padding: 10,
   },
 });

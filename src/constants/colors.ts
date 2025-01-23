@@ -2,6 +2,7 @@ export const COLORS = {
   MODAL: "rgb(232, 252, 249)",
   SELECTED_ICON: "rgb(140, 39, 245)",
   CALENDAR_TODAY: "rgb(179, 225, 255)",
+  MUTED_COLOR: "rgb(167, 167, 167)",
 };
 
 export const ICON_COLORS = {

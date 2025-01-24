@@ -1,10 +1,10 @@
+import { COLORS } from "@/constants/colors";
 import { MoodByPartOfDay } from "@/constants/Moods";
 import { PARTS_OF_DAY } from "@/constants/PartsOfDay";
 import { formatDate } from "@/utils/date";
 import { Link } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import CalendarPartOfDay from "./CalendarPartOfDay";
-import { COLORS } from "@/constants/colors";
 
 interface CalendarRowProps {
   date: Date;
@@ -30,7 +30,7 @@ export default function CalendarRow({
     <Link
       key={date.toISOString()}
       href={{
-        pathname: "./[date]",
+        pathname: "/(tabs)/(calendar)/[date]",
         params: { date: date.toISOString() },
       }}
       style={[
@@ -38,12 +38,15 @@ export default function CalendarRow({
         selected ? styles.today : null,
         inactive ? styles.inactive : null,
       ]}
-      asChild
+      asChild //Prevents wrapping children in <Text>
     >
-      <Pressable>
+      {/* `Link` with `asChild` prop requires children component with `onPress`, `onClick` support*/}
+      <TouchableOpacity>
+        {/* Column with date */}
         <View style={styles.cell}>
           <Text style={styles.date}>{formatDate(date)}</Text>
         </View>
+        {/* Columns for each part of the day with icon and note */}
         {PARTS_OF_DAY.map((partOfDay) => {
           const mood = moodForDate?.[partOfDay.id] || null;
           return (
@@ -52,7 +55,7 @@ export default function CalendarRow({
             </View>
           );
         })}
-      </Pressable>
+      </TouchableOpacity>
     </Link>
   );
 }

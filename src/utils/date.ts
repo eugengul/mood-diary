@@ -107,6 +107,12 @@ export function getWeekDates(date: Date): Date[] {
   return datesOfWeek;
 }
 
+export const shiftDate = (date: Date, numberOfDays: number): Date => {
+  const newDate = new Date(date);
+  newDate.setDate(newDate.getDate() + numberOfDays);
+  return newDate;
+};
+
 /**
  * A Map that uses local dates(without time) as keys.
  * The dates are saved as UTC midnight strings preserving original local

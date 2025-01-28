@@ -1,17 +1,15 @@
-import CalendarRow from "@/components/CalendarRow";
+import Week from "@/components/Calendar/Week/Week";
 import { useMoodData } from "@/hooks/useMoodData";
-import { getLocalMidnight, getWeekDates, shiftDate } from "@/utils/date";
+import { getWeekDates, shiftDate } from "@/utils/date";
 import { Link, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { Button, StyleSheet, View } from "react-native";
 
-export default function Week() {
+export default function WeekScreen() {
   const { date: dateString } = useLocalSearchParams<{ date: string }>();
   const date = new Date(dateString);
 
   const db = useSQLiteContext();
-
-  const today = getLocalMidnight(new Date());
 
   const daysOfWeek = getWeekDates(date);
 
@@ -41,17 +39,7 @@ export default function Week() {
       </Link>
 
       {/* Rows for each day in the week */}
-      {daysOfWeek.map((date) => {
-        return (
-          <CalendarRow
-            key={date.getTime()}
-            date={date}
-            moodForDate={moodData.get(date) || null}
-            selected={date.getTime() === today.getTime()}
-            inactive={date.getTime() > today.getTime()}
-          />
-        );
-      })}
+      <Week dates={daysOfWeek} moodData={moodData} />
 
       <Link
         href={{

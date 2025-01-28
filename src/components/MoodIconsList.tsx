@@ -9,12 +9,12 @@ import { MoodIcon } from "./MoodIcon";
 import React from "react";
 import { COLORS } from "@/constants/colors";
 
-interface MoodListProps {
+interface MoodIconsListProps {
   selectedMood: null | string;
   onSelect: (item: string) => void;
 }
 
-export function MoodList({ selectedMood, onSelect }: MoodListProps) {
+export function MoodIconsList({ selectedMood, onSelect }: MoodIconsListProps) {
   const { width } = useWindowDimensions();
   const moodKeys = Object.keys(MOOD_ICONS);
 

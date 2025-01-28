@@ -1,4 +1,6 @@
+import { MoodIcon } from "@/components/MoodIcon";
 import { Mood } from "@/constants/Moods";
+import type { PartOfDayData } from "@/constants/PartsOfDay";
 import { COLORS } from "@/constants/colors";
 import {
   Pressable,
@@ -8,16 +10,18 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import type { PartOfDayData } from "../constants/PartsOfDay";
-import { MoodIcon } from "./MoodIcon";
 
-type PartOfDayProps = {
+type PartOfDayMoodProps = {
   partOfDay: PartOfDayData;
   mood: Mood | null;
   onClick: () => void;
 };
 
-export function PartOfDayMood({ partOfDay, mood, onClick }: PartOfDayProps) {
+export function PartOfDayMood({
+  partOfDay,
+  mood,
+  onClick,
+}: PartOfDayMoodProps) {
   return (
     <TouchableOpacity style={styles.partOfDay} onPress={onClick}>
       <View style={styles.header}>

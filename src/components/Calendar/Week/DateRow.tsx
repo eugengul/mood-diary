@@ -4,9 +4,9 @@ import { PARTS_OF_DAY } from "@/constants/PartsOfDay";
 import { formatDate } from "@/utils/date";
 import { Link } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import CalendarPartOfDay from "./CalendarPartOfDay";
+import MoodCell from "./MoodCell";
 
-interface CalendarRowProps {
+interface DateRowProps {
   date: Date;
   moodForDate: MoodByPartOfDay | null;
   selected: boolean;
@@ -14,23 +14,23 @@ interface CalendarRowProps {
 }
 
 /**
- * Component that displays a row in a calendar containing a date and
- * a mood information for each part of the day.
+ * Component that displays a row in a calendar week view containing
+ * a date and a mood information for each part of the day.
  *
  * By pressing opens a page with information for this date.
  */
 
-export default function CalendarRow({
+export default function DateRow({
   date,
   moodForDate,
   selected,
   inactive,
-}: CalendarRowProps) {
+}: DateRowProps) {
   return (
     <Link
       key={date.toISOString()}
       href={{
-        pathname: "/(tabs)/(calendar)/[date]",
+        pathname: "/(tabs)/(calendar)/day/[date]",
         params: { date: date.toISOString() },
       }}
       style={[
@@ -51,7 +51,7 @@ export default function CalendarRow({
           const mood = moodForDate?.[partOfDay.id] || null;
           return (
             <View key={partOfDay.id} style={styles.cell}>
-              <CalendarPartOfDay mood={mood} />
+              <MoodCell mood={mood} />
             </View>
           );
         })}

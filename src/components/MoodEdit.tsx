@@ -3,14 +3,14 @@ import { MAX_NOTE_LENGTH } from "@/constants/constants";
 import { Mood } from "@/constants/Moods";
 import React from "react";
 import { Button, ScrollView, StyleSheet, TextInput, View } from "react-native";
-import { MoodList } from "./MoodList";
+import { MoodIconsList } from "./MoodIconsList";
 
-interface MoodListProps {
+interface MoodEditProps {
   mood: null | Mood;
   onSave: ({ mood, note }: { mood: string; note: string }) => void;
 }
 
-export function MoodEdit({ mood, onSave }: MoodListProps) {
+export function MoodEdit({ mood, onSave }: MoodEditProps) {
   const [selectedMood, onChangeSelectedMood] = React.useState(
     mood?.moodId || null,
   );
@@ -18,7 +18,10 @@ export function MoodEdit({ mood, onSave }: MoodListProps) {
 
   return (
     <View style={styles.container}>
-      <MoodList selectedMood={selectedMood} onSelect={onChangeSelectedMood} />
+      <MoodIconsList
+        selectedMood={selectedMood}
+        onSelect={onChangeSelectedMood}
+      />
       <ScrollView
         persistentScrollbar={true}
         style={styles.scroll}

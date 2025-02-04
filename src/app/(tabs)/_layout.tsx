@@ -1,9 +1,10 @@
-import { Tabs } from "expo-router";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { Tabs, useRouter } from "expo-router";
 import React from "react";
 import { Platform } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export default function TabLayout() {
+  const router = useRouter();
   return (
     <Tabs
       screenOptions={{
@@ -33,6 +34,15 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <MaterialIcons size={28} name="calendar-month" color={color} />
           ),
+        }}
+        // Reset tab to current week if user pressed tab's icon second time
+        listeners={{
+          tabPress: () => {
+            router.push({
+              pathname: "/week/[date]",
+              params: { date: new Date().toISOString() },
+            });
+          },
         }}
       />
     </Tabs>

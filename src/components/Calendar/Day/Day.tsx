@@ -15,14 +15,13 @@ interface DayProps {
 
 export default function Day({ date }: DayProps) {
   const db = useSQLiteContext();
-  const [moodData, refetchItems] = useMoodData({
+  const { moodData, refetchMoodData } = useMoodData({
     db,
-    startDate: date,
-    endDate: date,
+    dateRange: { start: date, end: date },
   });
   const moodForDate = moodData.get(date) || null;
 
-  useFocusEffect(refetchItems);
+  useFocusEffect(refetchMoodData);
 
   const setMood = (partOfDay: PartOfDayId, moodId: string, note: string) => {
     try {
@@ -31,7 +30,7 @@ export default function Day({ date }: DayProps) {
         partOfDay: partOfDay,
         moodId: moodId,
         note: note,
-      }).then(() => refetchItems());
+      }).then(() => refetchMoodData());
     } catch (err) {
       console.log(err);
       throw err;

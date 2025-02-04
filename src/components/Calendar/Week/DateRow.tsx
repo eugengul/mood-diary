@@ -1,7 +1,7 @@
 import { COLORS } from "@/constants/colors";
 import { MoodByPartOfDay } from "@/constants/Moods";
 import { PARTS_OF_DAY } from "@/constants/PartsOfDay";
-import { formatDate } from "@/utils/date";
+import { formatDate, getLocalMidnight } from "@/utils/date";
 import { Link } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MoodCell from "./MoodCell";
@@ -9,8 +9,7 @@ import MoodCell from "./MoodCell";
 interface DateRowProps {
   date: Date;
   moodForDate: MoodByPartOfDay | null;
-  selected: boolean;
-  inactive: boolean;
+  isSkeleton?: boolean;
 }
 
 /**
@@ -23,9 +22,12 @@ interface DateRowProps {
 export default function DateRow({
   date,
   moodForDate,
-  selected,
-  inactive,
+  isSkeleton = false,
 }: DateRowProps) {
+  const currentDate = getLocalMidnight(new Date());
+  const isCurrent = date.getTime() === currentDate.getTime();
+  const isFuture = date.getTime() > currentDate.getTime();
+
   return (
     <Link
       key={date.toISOString()}
@@ -35,8 +37,8 @@ export default function DateRow({
       }}
       style={[
         styles.row,
-        selected ? styles.today : null,
-        inactive ? styles.inactive : null,
+        isCurrent ? styles.today : null,
+        isFuture ? styles.inactive : null,
       ]}
       asChild //Prevents wrapping children in <Text>
     >
@@ -51,7 +53,7 @@ export default function DateRow({
           const mood = moodForDate?.[partOfDay.id] || null;
           return (
             <View key={partOfDay.id} style={styles.cell}>
-              <MoodCell mood={mood} />
+              {!isSkeleton && <MoodCell mood={mood} />}
             </View>
           );
         })}
@@ -80,5 +82,6 @@ const styles = StyleSheet.create({
   },
   inactive: {
     opacity: 0.2,
+    pointerEvents: "none",
   },
 });

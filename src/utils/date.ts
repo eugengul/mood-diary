@@ -150,3 +150,18 @@ export class DateMap<T> {
     return this._map.has(keyString);
   }
 }
+
+export interface DateRange {
+  start: Date;
+  end: Date;
+}
+
+export function isDateRangesEqual(
+  firstDateRange: DateRange,
+  secondDateRange: DateRange,
+) {
+  return (
+    firstDateRange.start.getTime() === secondDateRange.start.getTime() &&
+    firstDateRange.end.getTime() === secondDateRange.end.getTime()
+  );
+}

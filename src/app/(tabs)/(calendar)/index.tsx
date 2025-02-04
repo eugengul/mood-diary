@@ -1,6 +1,6 @@
 import { Redirect } from "expo-router";
 
-export default function RedirectToCurrentDay() {
+export default function RedirectToCurrentWeek() {
   return (
     <Redirect
       href={{

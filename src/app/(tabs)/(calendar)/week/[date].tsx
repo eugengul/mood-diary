@@ -1,4 +1,6 @@
 import Week from "@/components/Calendar/Week/Week";
+import WeekSkeleton from "@/components/Calendar/Week/WeekSkeleton";
+import SkeletonAnimation from "@/components/SkeletonAnimation";
 import { useMoodData } from "@/hooks/useMoodData";
 import { getWeekDates, shiftDate } from "@/utils/date";
 import { Link, useFocusEffect, useLocalSearchParams } from "expo-router";
@@ -8,7 +10,6 @@ import { Button, StyleSheet, View } from "react-native";
 export default function WeekScreen() {
   const { date: dateString } = useLocalSearchParams<{ date: string }>();
   const date = new Date(dateString);
-
   const db = useSQLiteContext();
 
   const daysOfWeek = getWeekDates(date);
@@ -17,10 +18,12 @@ export default function WeekScreen() {
 
   const previousWeek = shiftDate(date, -7);
 
-  const [moodData, refetchMoodData] = useMoodData({
+  const { moodData, isLoading, refetchMoodData } = useMoodData({
     db,
-    startDate: daysOfWeek[0],
-    endDate: daysOfWeek[6],
+    dateRange: {
+      start: daysOfWeek[0],
+      end: daysOfWeek[6],
+    },
   });
 
   // Refetch items whenever the route is focused
@@ -37,10 +40,17 @@ export default function WeekScreen() {
       >
         <Button title="Previous Week" />
       </Link>
-
-      {/* Rows for each day in the week */}
-      <Week dates={daysOfWeek} moodData={moodData} />
-
+      <SkeletonAnimation isLoading={isLoading}>
+        {isLoading ? (
+          <View style={{ flex: 1 }}>
+            <WeekSkeleton dates={daysOfWeek} />
+          </View>
+        ) : (
+          <View style={{ flex: 1 }}>
+            <Week dates={daysOfWeek} moodData={moodData} />
+          </View>
+        )}
+      </SkeletonAnimation>
       <Link
         href={{
           pathname: "./[date]",

@@ -1,5 +1,5 @@
 import { MoodByPartOfDay } from "@/constants/Moods";
-import { DateMap, getLocalMidnight } from "@/utils/date";
+import { DateMap } from "@/utils/date";
 import React from "react";
 import DateRow from "./DateRow";
 
@@ -9,7 +9,6 @@ interface WeekProps {
 }
 
 export default function Week({ dates, moodData }: WeekProps) {
-  const today = getLocalMidnight(new Date());
   return (
     <>
       {/* Rows for each day in the week */}
@@ -19,8 +18,6 @@ export default function Week({ dates, moodData }: WeekProps) {
             key={date.getTime()}
             date={date}
             moodForDate={moodData.get(date) || null}
-            selected={date.getTime() === today.getTime()}
-            inactive={date.getTime() > today.getTime()}
           />
         );
       })}

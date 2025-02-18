@@ -2,21 +2,21 @@ import Week from "@/components/Calendar/Week/Week";
 import WeekSkeleton from "@/components/Calendar/Week/WeekSkeleton";
 import SkeletonAnimation from "@/components/SkeletonAnimation";
 import { useMoodData } from "@/hooks/useMoodData";
-import { getWeekDates, shiftDate } from "@/utils/date";
+import { DateOnly, getWeekDates } from "@/utils/date";
 import { Link, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { Button, StyleSheet, View } from "react-native";
 
 export default function WeekScreen() {
   const { date: dateString } = useLocalSearchParams<{ date: string }>();
-  const date = new Date(dateString);
+  const date = new DateOnly(dateString);
   const db = useSQLiteContext();
 
   const daysOfWeek = getWeekDates(date);
 
-  const nextWeek = shiftDate(date, 7);
+  const nextWeek = date.shiftDays(7);
 
-  const previousWeek = shiftDate(date, -7);
+  const previousWeek = date.shiftDays(-7);
 
   const { moodData, isLoading, refetchMoodData } = useMoodData({
     db,

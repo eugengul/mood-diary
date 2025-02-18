@@ -1,81 +1,109 @@
-/**
- * Formats a date to a string in the format
- * "short weekday, numericmonth/day/year".
- *
- * @param date - The date to format.
- * @returns The formatted date string.
- */
-export const formatDate = (date: Date): string =>
-  date.toLocaleString(undefined, {
-    weekday: "short",
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-  });
+export class DateOnly {
+  private _year: number;
+  private _month: number;
+  private _day: number;
 
-/**
- * Returns a new `Date` object representing the local midnight of the
- * given date.
- *
- * @param date - The date to get the local midnight for.
- * @returns A new `Date` object representing the local midnight of the
- * given date.
- */
-export function getLocalMidnight(date: Date): Date {
-  date = new Date(date);
-  date.setHours(0, 0, 0);
-  date.setMilliseconds(0);
-  return date;
-}
+  /**
+   * Create an instance
+   * @param dateString - optional. A String in ISO format with zero time:
+   * "YYYY-MM-DDT00:00:00.000Z". If date isn't provided, the current
+   * local date is used.
+   * @throws If the input string is invalid or contains non-zero
+   * time components.
+   */
+  constructor(dateString?: string) {
+    if (!dateString) {
+      // If no date is provided, use the current local date
+      const currentDate = new Date();
+      this._year = currentDate.getFullYear();
+      this._month = currentDate.getMonth();
+      this._day = currentDate.getDate();
+    } else {
+      // UTC midnight in ISO format
+      if (!this._isUTCMidnightString(dateString))
+        throw new Error(
+          `Date string must represent midnight UTC: ${dateString}`,
+        );
 
-/**
- * Extracts the date (without time) from the UTC string and returns
- * a `Date` object representing the local midnight for the extracted
- * date.
- *
- * @param dateString - The UTC date string in ISO format to extract the
- * date from.
- * @returns A new `Date` object representing the local midnight for the
- * extracted date.
- *
- * @example
- * Example for timezone GMT+0100:
- * ```
- * // Returns the Date object "Fri Jan 10 2025 00:00:00 GMT+0100"
- * getLocalMidnightFromUTCString("2025-01-10T10:10:10.000Z")
- * ```
- */
-export function getLocalMidnightFromUTCString(dateString: string): Date {
-  const utcDate = new Date(dateString);
-  return new Date(
-    utcDate.getUTCFullYear(),
-    utcDate.getUTCMonth(),
-    utcDate.getUTCDate(),
-  );
-}
+      const utcDate = new Date(dateString);
+      if (isNaN(utcDate.getTime())) {
+        throw new Error(`String has invalid date format: ${dateString}`);
+      }
 
-/**
- * Extracts the local date (without time) from the Date object and save
- * this date as UTC midnight string.
- *
- * @param date - The Date object to extract date from.
- * @returns The UTC string in ISO format representing midnight for the
- * extracted date.
- *
- * @example
- * Example for timezone GMT+0100:
- * ```
- * const d = new Date("2025-01-01T00:30:00")
- * getUTCMidnightFromLocalDate(d) // Returns "2025-01-01T00:00:00.000Z"
- * d.toISOString() // Returns "2024-12-31T23:30:00.000Z"
- *
- * ```
- */
-export function getUTCMidnightFromLocalDate(date: Date): string {
-  date = getLocalMidnight(date);
-  // Adjust by timezone offset to maintain the same calendar date in UTC
-  date = new Date(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
-  return date.toISOString();
+      this._year = utcDate.getUTCFullYear();
+      this._month = utcDate.getUTCMonth();
+      this._day = utcDate.getUTCDate();
+    }
+  }
+
+  /**
+   * Check if string has ISO format with zero time "YYYY-MM-DDT00:00:00.000Z".
+   */
+  private _isUTCMidnightString(dateString: string): boolean {
+    const regex = /^\d{4}-\d{2}-\d{2}T00:00:00.000Z$/;
+    return regex.test(dateString);
+  }
+
+  /**
+   * Returns ISO string representation (UTC midnight) (YYYY-MM-DDT00:00:00.000Z)
+   */
+  public toISOString(): string {
+    return this.toUTCDate().toISOString();
+  }
+
+  /**
+   * Converts date to a Date object that stores the same date with a local
+   * but the time component is set to local midnight.
+   */
+  public toLocalDate(): Date {
+    return new Date(this._year, this._month, this._day);
+  }
+
+  /**
+   * Converts date to a Date object that stores the same date
+   * and the time component is set to UTC midnight.
+   */
+  private toUTCDate(): Date {
+    return new Date(Date.UTC(this._year, this._month, this._day));
+  }
+
+  /**
+   * Checks if two dates are equal
+   */
+  public isEqual(other: DateOnly): boolean {
+    return this.toISOString() === other.toISOString();
+  }
+
+  /**
+   * Checks if this date is after another date
+   */
+  public isAfter(other: DateOnly): boolean {
+    return this.toISOString() > other.toISOString();
+  }
+
+  /**
+   * Creates a new date shifted by specified number of days
+   * @param days - Number of days to shift (positive or negative)
+   * @returns New DateOnly instance
+   */
+  public shiftDays(days: number): DateOnly {
+    const newDate = this.toUTCDate();
+    newDate.setUTCDate(newDate.getUTCDate() + days);
+    return new DateOnly(newDate.toISOString());
+  }
+
+  /**
+   * Formats date according to current locale
+   */
+  public format(): string {
+    const localDate = this.toLocalDate();
+    return localDate.toLocaleString(undefined, {
+      weekday: "short",
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    });
+  }
 }
 
 /**
@@ -85,43 +113,30 @@ export function getUTCMidnightFromLocalDate(date: Date): string {
  * @returns A new `Date` object representing the first day of the week
  * for the given date.
  */
-function getFirstDayOfWeek(date: Date): Date {
-  date = getLocalMidnight(date);
-  date.setDate(date.getDate() - ((date.getDay() + 6) % 7));
-  return date;
+function getFirstDayOfWeek(date: DateOnly): DateOnly {
+  const daysBefore = (date.toLocalDate().getDay() + 6) % 7;
+  return date.shiftDays(-daysBefore);
 }
 
-export function getWeekDates(date: Date): Date[] {
+export function getWeekDates(date: DateOnly): DateOnly[] {
   const startOfWeek = getFirstDayOfWeek(date);
-  let endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 6);
 
-  const datesOfWeek = [];
-  for (
-    let d = new Date(startOfWeek.getTime());
-    d <= endOfWeek;
-    d.setDate(d.getDate() + 1)
-  ) {
-    datesOfWeek.push(new Date(d.getTime()));
-  }
+  const DAYS_IN_WEEK = 7;
+  var datesOfWeek = Array.from({ length: DAYS_IN_WEEK }).map(function (_, i) {
+    return startOfWeek.shiftDays(i);
+  });
+
   return datesOfWeek;
 }
 
-export const shiftDate = (date: Date, numberOfDays: number): Date => {
-  const newDate = new Date(date);
-  newDate.setDate(newDate.getDate() + numberOfDays);
-  return newDate;
-};
-
 /**
- * A Map that uses local dates(without time) as keys.
- * The dates are saved as UTC midnight strings preserving original local
- * date without time
+ * A Map that uses DateOnly instances as keys.
+ * The dates are saved as UTC midnight strings in ISO format.
  */
 export class DateMap<T> {
   private _map = new Map<string, T>();
 
-  constructor(entries?: Iterable<readonly [Date, T]>) {
+  constructor(entries?: Iterable<readonly [DateOnly, T]>) {
     if (entries) {
       for (const [key, value] of entries) {
         this.set(key, value);
@@ -129,31 +144,32 @@ export class DateMap<T> {
     }
   }
 
-  private _convertKey(key: Date): string {
-    if (!(key instanceof Date)) throw new Error("Key must be a date object");
-    return getUTCMidnightFromLocalDate(key);
+  private _convertKey(key: DateOnly): string {
+    if (!(key instanceof DateOnly))
+      throw new Error("Key must be a DateOnly object");
+    return key.toISOString();
   }
 
-  get(key: Date): T | undefined {
+  get(key: DateOnly): T | undefined {
     const keyString = this._convertKey(key);
     return this._map.get(keyString);
   }
 
-  set(key: Date, value: T): this {
+  set(key: DateOnly, value: T): this {
     const keyString = this._convertKey(key);
     this._map.set(keyString, value);
     return this;
   }
 
-  has(key: Date): boolean {
+  has(key: DateOnly): boolean {
     const keyString = this._convertKey(key);
     return this._map.has(keyString);
   }
 }
 
 export interface DateRange {
-  start: Date;
-  end: Date;
+  start: DateOnly;
+  end: DateOnly;
 }
 
 export function isDateRangesEqual(
@@ -161,7 +177,7 @@ export function isDateRangesEqual(
   secondDateRange: DateRange,
 ) {
   return (
-    firstDateRange.start.getTime() === secondDateRange.start.getTime() &&
-    firstDateRange.end.getTime() === secondDateRange.end.getTime()
+    firstDateRange.start.isEqual(secondDateRange.start) &&
+    firstDateRange.end.isEqual(secondDateRange.end)
   );
 }

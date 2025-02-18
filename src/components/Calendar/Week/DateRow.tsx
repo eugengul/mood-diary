@@ -1,13 +1,13 @@
 import { COLORS } from "@/constants/colors";
 import { MoodByPartOfDay } from "@/constants/Moods";
 import { PARTS_OF_DAY } from "@/constants/PartsOfDay";
-import { formatDate, getLocalMidnight } from "@/utils/date";
+import { DateOnly } from "@/utils/date";
 import { Link } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MoodCell from "./MoodCell";
 
 interface DateRowProps {
-  date: Date;
+  date: DateOnly;
   moodForDate: MoodByPartOfDay | null;
   isSkeleton?: boolean;
 }
@@ -24,9 +24,9 @@ export default function DateRow({
   moodForDate,
   isSkeleton = false,
 }: DateRowProps) {
-  const currentDate = getLocalMidnight(new Date());
-  const isCurrent = date.getTime() === currentDate.getTime();
-  const isFuture = date.getTime() > currentDate.getTime();
+  const currentDate = new DateOnly();
+  const isCurrent = date.isEqual(currentDate);
+  const isFuture = date.isAfter(currentDate);
 
   return (
     <Link
@@ -46,7 +46,7 @@ export default function DateRow({
       <TouchableOpacity>
         {/* Column with date */}
         <View style={styles.cell}>
-          <Text style={styles.date}>{formatDate(date)}</Text>
+          <Text style={styles.date}>{date.format()}</Text>
         </View>
         {/* Columns for each part of the day with icon and note */}
         {PARTS_OF_DAY.map((partOfDay) => {

@@ -1,10 +1,5 @@
 import { MoodByPartOfDay } from "@/constants/Moods";
-import {
-  DateMap,
-  DateRange,
-  getUTCMidnightFromLocalDate,
-  isDateRangesEqual,
-} from "@/utils/date";
+import { DateMap, DateOnly, DateRange, isDateRangesEqual } from "@/utils/date";
 import { getMoodBetweenDates, mapMoodEntriesToDateMapping } from "@/utils/db";
 import { SQLiteDatabase } from "expo-sqlite";
 import { useCallback, useState } from "react";
@@ -50,8 +45,8 @@ export const useMoodData = ({ db, dateRange }: useMoodDataProps) => {
     setCurrentDateRange({ ...dateRange });
   }
 
-  const startDateString = getUTCMidnightFromLocalDate(dateRange.start);
-  const endDateString = getUTCMidnightFromLocalDate(dateRange.end);
+  const startDateString = dateRange.start.toISOString();
+  const endDateString = dateRange.end.toISOString();
 
   const refetchMoodData = useCallback(() => {
     let isActive = true;
@@ -61,8 +56,8 @@ export const useMoodData = ({ db, dateRange }: useMoodDataProps) => {
         await db.withExclusiveTransactionAsync(async () => {
           const moodResult = await getMoodBetweenDates(
             db,
-            new Date(startDateString),
-            new Date(endDateString),
+            new DateOnly(startDateString),
+            new DateOnly(endDateString),
           );
           const moodData = mapMoodEntriesToDateMapping(moodResult);
           if (isActive) {

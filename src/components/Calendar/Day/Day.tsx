@@ -3,6 +3,7 @@ import { MoodEdit } from "@/components/MoodEdit";
 import { MoodModal } from "@/components/MoodModal";
 import { PartOfDayId, PARTS_OF_DAY } from "@/constants/PartsOfDay";
 import { useMoodData } from "@/hooks/useMoodData";
+import { DateOnly } from "@/utils/date";
 import { addReplaceMoodAsync } from "@/utils/db";
 import { useFocusEffect } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
@@ -10,7 +11,7 @@ import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 interface DayProps {
-  date: Readonly<Date>;
+  date: DateOnly;
 }
 
 export default function Day({ date }: DayProps) {

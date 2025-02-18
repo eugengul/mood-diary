@@ -1,10 +1,6 @@
 import { DateMoodMapping, MoodByPartOfDay } from "@/constants/Moods";
 import { SQLiteDatabase } from "expo-sqlite";
-import {
-  DateMap,
-  getLocalMidnightFromUTCString,
-  getUTCMidnightFromLocalDate,
-} from "./date";
+import { DateMap, DateOnly } from "./date";
 
 export interface MoodDBEntry {
   date: string;
@@ -53,19 +49,19 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
 /** Asynchronously retrieves mood entries from the database between the specified dates. */
 export async function getMoodBetweenDates(
   db: SQLiteDatabase,
-  fromDate: Date,
-  toDate: Date,
+  fromDate: DateOnly,
+  toDate: DateOnly,
 ) {
   return await db.getAllAsync<MoodDBEntry>(
     `SELECT date, partOfDay, moodId, note FROM mood
       WHERE date BETWEEN ? AND ?`,
-    getUTCMidnightFromLocalDate(fromDate),
-    getUTCMidnightFromLocalDate(toDate),
+    fromDate.toISOString(),
+    toDate.toISOString(),
   );
 }
 
 export interface MoodDBInput {
-  date: Date;
+  date: DateOnly;
   partOfDay: string;
   moodId: string;
   note: string;
@@ -80,7 +76,7 @@ export async function addReplaceMoodAsync(
     await db.runAsync(
       `INSERT OR REPLACE INTO mood (date, partOfDay, moodId, note)
         VALUES (?, ?, ?, ?);`,
-      getUTCMidnightFromLocalDate(moodData.date),
+      moodData.date.toISOString(),
       moodData.partOfDay,
       moodData.moodId,
       moodData.note,
@@ -103,7 +99,7 @@ export async function addReplaceMoodAsync(
 export function mapMoodEntriesToDateMapping(data: MoodDBEntry[]) {
   return data.reduce<DateMoodMapping>(
     (acc, { date, partOfDay, moodId, note }) => {
-      const dateObj = getLocalMidnightFromUTCString(date);
+      const dateObj = new DateOnly(date);
       const moodByPartOfDay = acc.get(dateObj) ?? {};
       moodByPartOfDay[partOfDay] = { moodId, note };
       acc.set(dateObj, moodByPartOfDay);

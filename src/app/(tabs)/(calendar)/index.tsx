@@ -1,3 +1,4 @@
+import { DateOnly } from "@/utils/date";
 import { Redirect } from "expo-router";
 
 export default function RedirectToCurrentWeek() {
@@ -5,7 +6,7 @@ export default function RedirectToCurrentWeek() {
     <Redirect
       href={{
         pathname: "./week/[date]",
-        params: { date: new Date().toISOString() },
+        params: { date: new DateOnly().toISOString() },
       }}
     />
   );

@@ -1,8 +1,9 @@
 import React from "react";
 import DateRow from "./DateRow";
+import { DateOnly } from "@/utils/date";
 
 interface SkeletonWeekProps {
-  dates: Date[];
+  dates: DateOnly[];
 }
 
 export default function WeekSkeleton({ dates }: SkeletonWeekProps) {

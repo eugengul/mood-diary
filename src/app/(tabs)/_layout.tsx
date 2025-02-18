@@ -1,3 +1,4 @@
+import { DateOnly } from "@/utils/date";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Tabs, useRouter } from "expo-router";
 import React from "react";
@@ -40,7 +41,7 @@ export default function TabLayout() {
           tabPress: () => {
             router.push({
               pathname: "/week/[date]",
-              params: { date: new Date().toISOString() },
+              params: { date: new DateOnly().toISOString() },
             });
           },
         }}

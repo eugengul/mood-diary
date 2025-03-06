@@ -45,7 +45,9 @@
           },
           "ios": {}
         }
-      ]
+      ],
+      ["./plugins/withSplitsConfig.js"],
+      ["./plugins/withCustomSigningConfig.js"]
     ],
     "experiments": {
       "typedRoutes": true

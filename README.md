@@ -18,8 +18,34 @@ For android you can download the latest APK release [here](https://github.com/eu
 
 ## Building APK
 
-1. Install Android Studio.
+Follow these steps to build a release APK for your Expo project:
 
-2. Run command `npx expo run:android --variant release`.
+### Prerequisites
 
-For more info see [expo documentation](https://docs.expo.dev/guides/local-app-development/).
+- Install Android Studio if you haven't already.
+
+### Steps
+
+1. **Prebuild the Android project**
+   ```sh
+   npx expo prebuild --platform android --clean
+   ```
+
+2. **[Generate an upload key](https://reactnative.dev/docs/signed-apk-android#generating-an-upload-key)** (if you don't have one).
+
+3. **[Set up Gradle variables](https://reactnative.dev/docs/signed-apk-android#setting-up-gradle-variables)** for signing the APK.
+
+4. **Navigate to the Android project directory**
+   ```sh
+   cd android
+   ```
+
+5. **Build the release APK**
+   ```sh
+   ./gradlew assembleRelease
+   ```
+
+6. **Locate the built APK** The generated APK files will be in:
+   ```
+   android/app/build/outputs/apk/release/
+   ```
